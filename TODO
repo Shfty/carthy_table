@@ -1,28 +1,5 @@
-Generalized Cell / Row / Table handling
-    HTable trait?
-        HCons<HCons<InnerHead, InnerTail>, Tail> is the identity for a 2D table
-        WIDTH / HEIGHT constants derived from HList::LEN
-        Should be the base for PopColumn and Transpose
-        InnerNamed / OuterNamed variants?
-            HCons<Field<N, HCons<InnerHead, InnerTail>, Tail> is the identity for outer-named
-            HCons<HCons<Field<N, InnerHead>, InnerTail>, Tail> is the identity for inner-named
-            Is there a way to generalize nameless, inner-named and outer-named under a single trait?
-                Needing three of everything will quickly become cumbersome
-                May be inevitable, since the nameless identity would conflict with the inner-named identity
-                    Also prevents unifying under a supertrait, since blanket implementations bound on the subtraits would conflict
-    Investigate HMappable equivalent for FieldList
-        Being able to map across names / rows and return a HList would simplify existing list.values() call sites
-    Now Transpose is in place, outer-named rows can be turned into columns
-
-Need to think about the transition from a HTable trait structure to a comfy-table Table
-    Row and Cell too, should be able to use iterators to construct all three
-
 Implement Generic support for unnamed and inner-named tables, use separate traits for converting into rows / columns
 Implement LabelledGeneric support for converting into outer-named tables by column
-
-Create unified frunk extension module to hold traits developed in the course of other projects
-    Also need to investigate better workspace layout
-        See if symlinks can be leveraged to split concrete library source away from project workspaces while retaining easy edit capability
 
 Deebs visualization note: It's probably wiser to replace Query's output tuple with the HList value, and push the index parameter onto the front
     Better for visualizing via table
