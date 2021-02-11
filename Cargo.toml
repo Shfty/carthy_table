@@ -1,0 +1,11 @@
+[package]
+name = "carthy_table"
+version = "0.1.0"
+authors = ["Josh Palmer <jpalmerwatkins@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+frunk_core = "0.3.1"
+frunk_derives = "0.3.1"
+comfy-table = "2.1.0"
+carth = { path = "../carth" }
