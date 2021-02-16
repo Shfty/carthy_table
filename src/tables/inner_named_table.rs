@@ -1,4 +1,7 @@
-use carth::{hlist::{homogenous_list::HomogenousList}, htable::{PopColumn, Transpose}};
+use carth::{
+    hlist::homogenous_list::HomogenousList,
+    htable::{PopColumn, Transpose},
+};
 use comfy_table::Table;
 use frunk_core::hlist::{HCons, HNil};
 
@@ -116,10 +119,39 @@ where
     }
 }
 
+/// `Iterator` over inner-named rows that can be converted into a `Table`
+pub trait InnerNamedRowIteratorToTable<'a, T> {
+    fn to_table(self) -> Table;
+}
+
+impl<'a, T, I> InnerNamedRowIteratorToTable<'a, T> for I
+where
+    I: Iterator<Item = T>,
+    T: FieldList<'a>,
+    T::NamesOutput: ToCellList,
+    T::ValueTypes: ToCellList,
+{
+    fn to_table(mut self) -> Table {
+        let mut table = Table::new();
+        
+        if let Some(head) = self.next() {
+            table.set_header(head.names().list_to_cells().to_row());
+            table.add_row(head.into_values().list_to_cells().to_row());
+        }
+
+        for item in self {
+            table.add_row(item.into_values().list_to_cells().to_row());
+        }
+
+        table
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
 
+    use carth::hlist::homogenous_list::HomogenousListIntoIter;
     use frunk_core::{field, hlist};
 
     #[test]
@@ -157,6 +189,20 @@ mod tests {
         ];
 
         let table = inner_named_rows_table.to_table();
+        println!("\nTable:\n{}", table);
+    }
+
+    #[test]
+    fn test_inner_named_row_iterator_to_table() {
+        let inner_named_rows_table = hlist![
+            hlist![field!(i32, 1), field!(f32, 4.1), field!(char, '7')],
+            hlist![field!(i32, 2), field!(f32, 5.2), field!(char, '8')],
+            hlist![field!(i32, 3), field!(f32, 6.3), field!(char, '9')],
+        ];
+
+        let iter = inner_named_rows_table.into_iter();
+        let _proof: &dyn InnerNamedRowIteratorToTable<_> = &iter;
+        let table = iter.to_table();
         println!("\nTable:\n{}", table);
     }
 }

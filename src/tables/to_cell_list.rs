@@ -7,32 +7,17 @@ use super::cell_list::CellList;
 pub trait ToCellList {
     type Output: CellList;
 
-    fn list_to_cells(&self) -> Self::Output;
+    fn list_to_cells(self) -> Self::Output;
 }
 
 impl<Head, Tail> ToCellList for HCons<Head, Tail>
 where
-    Head: Copy + ToCell,
+    Head: ToCell,
     Tail: ToCellList,
 {
     type Output = HCons<Cell, Tail::Output>;
 
-    fn list_to_cells(&self) -> Self::Output {
-        HCons {
-            head: self.head.to_cell(),
-            tail: self.tail.list_to_cells(),
-        }
-    }
-}
-
-impl<Head, Tail> ToCellList for &HCons<Head, Tail>
-where
-    Head: Copy + ToCell,
-    Tail: ToCellList,
-{
-    type Output = HCons<Cell, Tail::Output>;
-
-    fn list_to_cells(&self) -> Self::Output {
+    fn list_to_cells(self) -> Self::Output {
         HCons {
             head: self.head.to_cell(),
             tail: self.tail.list_to_cells(),
@@ -43,7 +28,7 @@ where
 impl ToCellList for HNil {
     type Output = HNil;
 
-    fn list_to_cells(&self) -> Self::Output {
+    fn list_to_cells(self) -> Self::Output {
         HNil
     }
 }

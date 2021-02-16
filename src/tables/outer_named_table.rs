@@ -35,7 +35,7 @@ impl<'a, Width> OuterNamedTable<'a, Width> for HNil {
 mod tests {
     use frunk_core::{field, hlist};
 
-    use super::OuterNamedTable;
+    use super::*;
 
     #[test]
     fn test_outer_named_table() {
